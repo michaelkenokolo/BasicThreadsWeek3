@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <iostream>
 
-int sum;
+int sum, expected;
 void *runner(void *param);
 
 
@@ -24,16 +24,23 @@ int main(int argc, char *argv[]) {
   pthread_attr_init(&attr);
   pthread_create(&tid, &attr, runner, argv[1]);
   pthread_join(tid, NULL);
-
+//step 2 comment that ^^
+  int upper2 = atoi(argv[1]);
+  expected = (upper2 * (upper2 + 1))/2;
+  // if (sum != expected) {
+  //   printf("sum= %d\n", sum);
+  // }
   printf("sum= %d\n", sum);
-
 }
 
 void *runner(void *param) {
   int i, upper = atoi((char*)param);
-  sum = 0;
 
-  for (int i = 1; i <= upper; i++) {
+  sum = 0;
+  pthread_t *workers;
+  workers = new pthread_t[upper];
+  for (int i = 0; i <= upper; i++) {
+    //pthread_join(workers[i], NULL);
     sum += i;
   }
 

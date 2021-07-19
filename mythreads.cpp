@@ -1,17 +1,20 @@
 #include <pthread.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <iostream>
+using namespace std;
 
-int sum, expected;
+int sum = 0;
 void *runner(void *param);
 
 
 int main(int argc, char *argv[]) {
 
-  pthread_t tid;
+  //pthread_t tid;
+  pthread_t ths[100];
   pthread_attr_t attr;
 
-  if (argc != 2) {
+  /*if (argc != 2) {
     fprintf(stderr, "usage: a.out <integer value>\n");
     return -1;
   }
@@ -19,37 +22,34 @@ int main(int argc, char *argv[]) {
   if(atoi(argv[1]) < 0) {
     fprintf(stderr, "%d must be >= 0\n", atoi(argv[1]));
     return -1;
-  }
+  }*/
 
   pthread_attr_init(&attr);
-  pthread_create(&tid, &attr, runner, argv[1]);
-  pthread_join(tid, NULL);
-//step 2 comment that ^^
-  int upper2 = atoi(argv[1]);
-  expected = (upper2 * (upper2 + 1))/2;
-  // if (sum != expected) {
-  //   printf("sum= %d\n", sum);
-  // }
-  printf("sum= %d\n", sum);
+
+  for(int t = 0; t != 100; t++) {
+    pthread_create(&ths[t], &attr, runner, argv[1]);
+  }
+
+  for(int t = 0; t != 100; t++) {
+    pthread_join(ths[t], NULL);
+  }
+
+  if (sum != 100) {
+      cout << sum << endl;
+      return 0;
+  }
+
+  //printf("sum= %d\n", sum);
+
 }
 
 void *runner(void *param) {
-  int i, upper = atoi((char*)param);
+  int upper = 100;
 
-  sum = 0;
-  pthread_t *workers;
-  workers = new pthread_t[upper];
-  for (int i = 0; i <= upper; i++) {
-    //pthread_join(workers[i], NULL);
-    sum += i;
-  }
+  //for (int i = 1; i <= upper; i++) {
+  sum++;
+  //}
 
   pthread_exit(0);
 
 }
-//
-// #define NUM_THREADS 10
-//
-// for (int i = 0; i < NUM_THREADS; i++) {
-//   pthread_join(workers[i], NULL);
-// }
